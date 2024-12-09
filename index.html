@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            padding: 2rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #00f2fe, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .phase-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: #4facfe;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            background: rgba(79, 172, 254, 0.1);
+            transform: scale(1.1);
+        }
+
+        .nav-button:disabled {
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .phase-title {
+            font-size: 1.8rem;
+            text-align: center;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+        }
+
+        .tasks-container {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .task-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(-5px);
+        }
+
+        .task-checkbox {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #4facfe;
+            margin-left: 1rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .task-checkbox.completed {
+            background: #4facfe;
+        }
+
+        .task-checkbox.completed::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .task-text {
+            flex: 1;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: #4facfe;
+            box-shadow: 0 0 15px #4facfe;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container fade-in">
+        <div class="header">
+            <h1>תכנית יישום NoxingAI</h1>
+        </div>
+
+        <div class="phase-navigation">
+            <button class="nav-button" id="prevBtn">←</button>
+            <h2 class="phase-title">שלב <span id="phaseNumber">1</span>: <span id="phaseTitle"></span></h2>
+            <button class="nav-button" id="nextBtn">→</button>
+        </div>
+
+        <div class="tasks-container" id="tasksContainer"></div>
+
+        <div class="progress-dots" id="progressDots"></div>
+    </div>
+
+    <script>
+        const phases = [
+            {
+                title: "מחקר ותכנון ראשוני",
+                tasks: [
+                    "הקמת צוות מחקר ופיתוח מומחה ל-AI",
+                    "מחקר מעמיק של טכנולוגיות AI קיימות ומתודולוגיות פיתוח",
+                    "הגדרת ארכיטקטורת המערכת הבסיסית",
+                    "יצירת אבות טיפוס ראשוניים למודלים השונים",
+                    "בחינת היתכנות טכנית לכל מודול"
+                ]
+            },
+            {
+                title: "פיתוח ליבת המערכת",
+                tasks: [
+                    "פיתוח תשתית הבסיס של MiniNox",
+                    "יצירת ממשק צ'אט בסיסי",
+                    "פיתוח מערכת עיבוד שפה טבעית",
+                    "הטמעת יכולות בסיסיות של ראייה ממוחשבת",
+                    "פיתוח תשתית קוד פתוח"
+                ]
+            },
+            {
+                title: "פיתוח מודולים מתקדמים",
+                tasks: [
+                    "פיתוח StartNox - מערכת יצירת תמונות",
+                    "פיתוח BaisicNox - מערכת יצירת מוזיקה",
+                    "פיתוח ProNox - מערכת יצירת וידאו",
+                    "פיתוח MaxNox - מערכת דיפ-פייק מתקדמת",
+                    "אינטגרציה בין כל המודולים"
+                ]
+            },
+            {
+                title: "פיתוח ממשקים ותשתיות",
+                tasks: [
+                    "פיתוח ממשק משתמש אחיד",
+                    "יצירת סביבת פיתוח למפתחים חיצוניים",
+                    "פיתוח API ותיעוד מקיף",
+                    "הקמת תשתית ענן מבוזרת",
+                    "פיתוח מערכת אבטחה חזקה"
+                ]
+            },
+            {
+                title: "בדיקות והשקה",
+                tasks: [
+                    "בדיקות מקיפות של כל המודולים",
+                    "תוכנית בטא סגורה למשתמשים נבחרים",
+                    "תיקון באגים ושיפור ביצועים",
+                    "השקה הדרגתית של המוצר",
+                    "איסוף משוב ושיפור מתמיד"
+                ]
+            }
+        ];
+
+        let currentPhase = 0;
+        const completedTasks = new Set();
+
+        function updatePhaseDisplay() {
+            document.getElementById('phaseNumber').textContent = currentPhase + 1;
+            document.getElementById('phaseTitle').textContent = phases[currentPhase].title;
+            updateTasks();
+            updateNavigationButtons();
+            updateProgressDots();
+        }
+
+        function updateTasks() {
+            const container = document.getElementById('tasksContainer');
+            container.innerHTML = '';
+            
+            phases[currentPhase].tasks.forEach((task, index) => {
+                const taskKey = `${currentPhase}-${index}`;
+                const taskElement = document.createElement('div');
+                taskElement.className = 'task-item fade-in';
+                taskElement.style.animationDelay = `${index * 0.1}s`;
+                
+                const checkbox = document.createElement('div');
+                checkbox.className = `task-checkbox ${completedTasks.has(taskKey) ? 'completed' : ''}`;
+                
+                const text = document.createElement('span');
+                text.className = 'task-text';
+                text.textContent = task;
+                
+                taskElement.appendChild(checkbox);
+                taskElement.appendChild(text);
+                
+                taskElement.addEventListener('click', () => toggleTask(taskKey, checkbox));
+                container.appendChild(taskElement);
+            });
+        }
+
+        function toggleTask(taskKey, checkbox) {
+            if (completedTasks.has(taskKey)) {
+                completedTasks.delete(taskKey);
+                checkbox.classList.remove('completed');
+            } else {
+                completedTasks.add(taskKey);
+                checkbox.classList.add('completed');
+            }
+        }
+
+        function updateNavigationButtons() {
+            document.getElementById('prevBtn').disabled = currentPhase === 0;
+            document.getElementById('nextBtn').disabled = currentPhase === phases.length - 1;
+        }
+
+        function updateProgressDots() {
+            const dotsContainer = document.getElementById('progressDots');
+            dotsContainer.innerHTML = '';
+            
+            phases.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.className = `dot ${index === currentPhase ? 'active' : ''}`;
+                dot.addEventListener('click', () => {
+                    currentPhase = index;
+                    updatePhaseDisplay();
+                });
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (currentPhase > 0) {
+                currentPhase--;
+                updatePhaseDisplay();
+            }
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentPhase < phases.length - 1) {
+                currentPhase++;
+                updatePhaseDisplay();
+            }
+        });
+
+        // Initial display
+        updatePhaseDisplay();
+    </script>
+</body>
+</html>
